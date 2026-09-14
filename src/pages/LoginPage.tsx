@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Shield, Eye, EyeOff, Lock, Info } from "lucide-react";
+import { Shield, Eye, EyeOff, Lock, Info, ChevronRight } from "lucide-react";
 import { DISTRICTS } from "../data/mockData";
 
 interface LoginPageProps {
@@ -7,10 +7,37 @@ interface LoginPageProps {
   onGoToRegister: () => void;
 }
 
+const DEMO_CREDENTIALS = [
+  {
+    name: "Priya Deshmukh",
+    role: "CASEWORKER",
+    location: "Nagpur",
+    id: "MH-CW-00142",
+    password: "demo123",
+    district: "Nagpur",
+  },
+  {
+    name: "Rajesh Kulkarni",
+    role: "DISTRICT",
+    location: "Nagpur",
+    id: "MH-DS-00045",
+    password: "demo123",
+    district: "Nagpur",
+  },
+  {
+    name: "Dr. Anjali Sharma",
+    role: "NATIONAL",
+    location: "All Districts",
+    id: "MH-SA-00001",
+    password: "demo123",
+    district: "Mumbai",
+  },
+];
+
 export default function LoginPage({ onLogin, onGoToRegister }: LoginPageProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({
-    employeeId: "",
+    officerId: "",
     password: "",
     district: "",
     remember: false,
@@ -19,58 +46,68 @@ export default function LoginPage({ onLogin, onGoToRegister }: LoginPageProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.employeeId || !form.password || !form.district) {
+    if (!form.officerId || !form.password || !form.district) {
       setError("Please fill in all required fields.");
       return;
     }
     onLogin();
   };
 
+  const fillDemoCredentials = (cred: typeof DEMO_CREDENTIALS[0]) => {
+    setForm({
+      ...form,
+      officerId: cred.id,
+      password: cred.password,
+      district: cred.district,
+    });
+    setError("");
+  };
+
   return (
-    <div className="min-h-screen bg-[#f0f4f8] flex flex-col items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        {/* Header branding */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 flex flex-col items-center justify-center px-4 py-8">
+      <div className="w-full max-w-[580px]">
+        {/* CCTNS Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-[#1e3a5f] rounded-xl mb-4 shadow-md">
-            <Shield size={28} className="text-white" />
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#1e3a5f] to-[#2d5a8f] rounded-2xl mb-4 shadow-lg">
+            <Shield size={32} className="text-white" />
           </div>
-          <h1 className="font-heading text-2xl font-bold text-gray-900">Manas Raksha</h1>
-          <p className="text-sm text-gray-500 mt-1">AI-Assisted Mental Health Monitoring System</p>
-          <p className="text-xs text-gray-400 mt-0.5">District Caseworker / Official Portal</p>
+          <h1 className="font-heading text-3xl font-bold text-gray-900 mb-2">CCTNS Officer Portal</h1>
+          <p className="text-sm text-gray-600 font-medium">Crime and Criminal Tracking Network & Systems</p>
+          <p className="text-xs text-gray-500 mt-1">Manas Raksha — Mental Health Monitoring Integration</p>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
-          <h2 className="font-heading font-semibold text-lg text-gray-800 mb-5">Sign In</h2>
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-xl p-8">
+          <h2 className="font-heading font-bold text-xl text-gray-900 mb-6">Sign In</h2>
 
           {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700 flex items-center gap-2">
-              <Info size={15} />
+            <div className="mb-5 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700 flex items-center gap-2">
+              <Info size={16} />
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Employee / Officer ID <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 placeholder="e.g. MH-CW-00142"
-                value={form.employeeId}
-                onChange={(e) => setForm({ ...form, employeeId: e.target.value })}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-colors"
+                value={form.officerId}
+                onChange={(e) => setForm({ ...form, officerId: e.target.value })}
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 District <span className="text-red-500">*</span>
               </label>
               <select
                 value={form.district}
                 onChange={(e) => setForm({ ...form, district: e.target.value })}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-colors bg-white"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27currentColor%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.2em] bg-[right_0.5rem_center] bg-no-repeat"
               >
                 <option value="">Select District</option>
                 {DISTRICTS.map((d) => (
@@ -80,7 +117,7 @@ export default function LoginPage({ onLogin, onGoToRegister }: LoginPageProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
@@ -89,64 +126,94 @@ export default function LoginPage({ onLogin, onGoToRegister }: LoginPageProps) {
                   placeholder="Enter your password"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 pr-10 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-colors"
+                  className="w-full border border-gray-300 rounded-xl px-4 py-3 pr-11 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={form.remember}
-                  onChange={(e) => setForm({ ...form, remember: e.target.checked })}
-                  className="rounded border-gray-300"
-                />
-                Remember me
-              </label>
-              <button type="button" className="text-xs text-blue-600 hover:underline">
+            <div className="flex items-center justify-end pt-1">
+              <button type="button" className="text-sm text-blue-600 font-medium hover:underline">
                 Forgot password?
               </button>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-[#1e3a5f] text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-[#162d4d] transition-colors shadow-sm flex items-center justify-center gap-2"
+              className="w-full bg-[#1e3a5f] text-white rounded-xl py-3.5 text-sm font-semibold hover:bg-[#2d5a8f] transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 mt-6"
             >
-              <Lock size={15} />
+              <Lock size={16} />
               Sign In Securely
             </button>
           </form>
 
-          <div className="mt-4 text-center">
-            <span className="text-xs text-gray-500">New caseworker? </span>
-            <button onClick={onGoToRegister} className="text-xs text-blue-600 font-medium hover:underline">
+          <div className="mt-5 text-center pt-5 border-t border-gray-100">
+            <span className="text-sm text-gray-600">New officer? </span>
+            <button onClick={onGoToRegister} className="text-sm text-blue-600 font-semibold hover:underline">
               Register account
             </button>
           </div>
         </div>
 
-        <div className="mt-4 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
-          <div className="flex items-start gap-2">
-            <Info size={14} className="text-amber-600 shrink-0 mt-0.5" />
+        {/* Demo Credentials - Moved to bottom */}
+        <div className="bg-gradient-to-br from-slate-50 to-blue-50 border border-slate-200 rounded-2xl shadow-sm p-5 mt-5">
+          <p className="text-sm font-semibold text-gray-800 mb-3">Demo Credentials (Click to use):</p>
+          <div className="space-y-2.5">
+            {DEMO_CREDENTIALS.map((cred) => (
+              <button
+                key={cred.id}
+                onClick={() => fillDemoCredentials(cred)}
+                className="w-full bg-white hover:bg-blue-50 border border-slate-200 rounded-xl p-3.5 text-left transition-all hover:shadow-md hover:border-blue-300 group"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-900 text-sm mb-0.5">{cred.name}</p>
+                    <p className="text-xs text-gray-600 mb-2">
+                      {cred.role} • {cred.location}
+                    </p>
+                    <div className="flex items-center gap-4">
+                      <p className="text-xs text-gray-700">
+                        <span className="font-medium">ID:</span>{" "}
+                        <span className="font-mono text-blue-600">{cred.id}</span>
+                      </p>
+                      <p className="text-xs text-gray-700">
+                        <span className="font-medium">PASS:</span>{" "}
+                        <span className="font-mono text-blue-600">{cred.password}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-blue-600 group-hover:translate-x-1 transition-transform">
+                    <ChevronRight size={18} />
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-5 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3.5">
+          <div className="flex items-start gap-2.5">
+            <Info size={16} className="text-blue-600 shrink-0 mt-0.5" />
             <div>
-              <p className="text-xs text-amber-800 font-medium">Prototype Notice</p>
-              <p className="text-xs text-amber-700 mt-0.5">
-                Authentication is simulated using local mock data. No real credentials are stored or validated. For demonstration purposes only.
+              <p className="text-xs text-blue-900 font-semibold mb-1">CCTNS Integration</p>
+              <p className="text-xs text-blue-800 leading-relaxed">
+                This portal integrates with the Crime and Criminal Tracking Network & Systems for seamless case management and mental health monitoring of victims and offenders.
               </p>
             </div>
           </div>
         </div>
 
-        <p className="text-center text-xs text-gray-400 mt-4">
-          Authorised access only · Manas Raksha — Smart India Hackathon Prototype
+        <p className="text-center text-xs text-gray-500 mt-5 font-medium">
+          🔒 Secure Government Portal · Authorised Access Only
+        </p>
+        <p className="text-center text-xs text-gray-400 mt-1">
+          Ministry of Home Affairs · Government of India
         </p>
       </div>
     </div>
