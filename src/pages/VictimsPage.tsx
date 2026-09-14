@@ -1,17 +1,74 @@
 import { useState } from "react";
 import { mockCases } from "../data/mockData";
 import RiskBadge from "../components/RiskBadge";
-import { Shield, Phone, MessageSquare, CheckCircle, Clock, AlertCircle, X } from "lucide-react";
+import { Shield, Phone, MessageSquare, CheckCircle, Clock, AlertCircle, X, UserCheck, User } from "lucide-react";
 import type { Case } from "../data/mockData";
+import { type UserSession } from "./LoginPage";
 
-export default function VictimsPage() {
+interface VictimsPageProps {
+  currentUser?: UserSession | null;
+}
+
+export default function VictimsPage({ currentUser }: VictimsPageProps) {
   const [selectedVictim, setSelectedVictim] = useState<Case | null>(null);
   const [checkedIn, setCheckedIn] = useState<Set<string>>(new Set());
 
+  // RBAC: Filter cases based on user role
+  const accessibleCases = mockCases.filter((c) => {
+    if (!currentUser) return false;
+    
+    // CASEWORKER: Only see assigned cases
+    if (currentUser.role === "CASEWORKER") {
+      return c.assignedCaseworker === currentUser.name && c.district === currentUser.district;
+    }
+    
+    // DISTRICT: Only see cases in their district
+    if (currentUser.role === "DISTRICT") {
+      return c.district === currentUser.district;
+    }
+    
+    // NATIONAL: See all cases (state-wide)
+    if (currentUser.role === "NATIONAL") {
+      return true;
+    }
+    
+    return false;
+  });
+
   return (
     <div className="p-5 max-w-7xl mx-auto space-y-5">
+      {/* RBAC Info Banner for District Supervisor */}
+      {currentUser?.role === "DISTRICT" && (
+        <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <UserCheck size={18} className="text-indigo-600 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h4 className="font-semibold text-indigo-900 text-sm">District Supervisor View - All Victims</h4>
+              <p className="text-xs text-indigo-700 mt-1">
+                Viewing all {accessibleCases.length} victims across all caseworkers in {currentUser.district} district.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* RBAC Info Banner for Caseworker */}
+      {currentUser?.role === "CASEWORKER" && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <User size={18} className="text-blue-600 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h4 className="font-semibold text-blue-900 text-sm">Caseworker View - My Assigned Victims</h4>
+              <p className="text-xs text-blue-700 mt-1">
+                Viewing only {accessibleCases.length} victim(s) assigned to you ({currentUser.name}).
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {mockCases.map((c) => (
+        {accessibleCases.map((c) => (
           <div key={c.id} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
             <div className="flex items-start justify-between mb-3">
               <div>

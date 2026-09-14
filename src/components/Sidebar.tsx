@@ -11,6 +11,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import { type UserSession } from "../pages/LoginPage";
 
 export type Page =
   | "dashboard"
@@ -26,6 +27,8 @@ interface SidebarProps {
   onNavigate: (page: Page) => void;
   open: boolean;
   onToggle: () => void;
+  currentUser?: UserSession | null;
+  onLogout?: () => void;
 }
 
 const NAV_ITEMS: { id: Page; label: string; Icon: React.FC<{ size?: number; className?: string }> }[] = [
@@ -38,7 +41,7 @@ const NAV_ITEMS: { id: Page; label: string; Icon: React.FC<{ size?: number; clas
   { id: "settings", label: "Settings", Icon: Settings },
 ];
 
-export default function Sidebar({ currentPage, onNavigate, open, onToggle }: SidebarProps) {
+export default function Sidebar({ currentPage, onNavigate, open, onToggle, currentUser, onLogout }: SidebarProps) {
   return (
     <>
       {open && (
@@ -94,15 +97,20 @@ export default function Sidebar({ currentPage, onNavigate, open, onToggle }: Sid
 
         <div className="px-3 pb-5 border-t border-white/10 pt-4">
           <div className="px-3 py-2 text-xs text-blue-200/50 font-mono">
-            Caseworker: Priya Deshmukh
+            Caseworker: {currentUser?.name || "Not logged in"}
           </div>
           <div className="px-3 py-1 text-xs text-blue-200/40 font-mono">
-            District: Nagpur
+            District: {currentUser?.district || "N/A"}
           </div>
-          <button className="mt-3 w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-blue-100/60 hover:bg-white/8 hover:text-white transition-colors">
-            <LogOut size={15} />
-            Sign Out
-          </button>
+          {onLogout && (
+            <button 
+              onClick={onLogout}
+              className="mt-3 w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-blue-100/60 hover:bg-white/8 hover:text-white transition-colors"
+            >
+              <LogOut size={15} />
+              Sign Out
+            </button>
+          )}
         </div>
       </aside>
     </>

@@ -1,12 +1,17 @@
 import { useState } from "react";
-import { Search, Eye, Filter, AlertTriangle, X } from "lucide-react";
+import { Search, Eye, Filter, AlertTriangle, X, UserCheck, User } from "lucide-react";
 import { mockCases, mockAIInsights, type Case, type RiskLevel, type CaseStage, CASE_STAGES } from "../data/mockData";
 import RiskBadge from "../components/RiskBadge";
 import CaseLifecycle from "../components/CaseLifecycle";
 import AIInsightsPanel from "../components/AIInsightsPanel";
 import EscalationDialog from "../components/EscalationDialog";
+import { type UserSession } from "./LoginPage";
 
-export default function CasesPage() {
+interface CasesPageProps {
+  currentUser?: UserSession | null;
+}
+
+export default function CasesPage({ currentUser }: CasesPageProps) {
   const [search, setSearch] = useState("");
   const [riskFilter, setRiskFilter] = useState<RiskLevel | "All">("All");
   const [stageFilter, setStageFilter] = useState<CaseStage | "All">("All");
@@ -15,7 +20,29 @@ export default function CasesPage() {
   const [escalateCase, setEscalateCase] = useState<Case | null>(null);
   const [escalatedIds, setEscalatedIds] = useState<Set<string>>(new Set());
 
-  const filtered = mockCases.filter((c) => {
+  // RBAC: Filter cases based on user role
+  const accessibleCases = mockCases.filter((c) => {
+    if (!currentUser) return false;
+    
+    // CASEWORKER: Only see assigned cases
+    if (currentUser.role === "CASEWORKER") {
+      return c.assignedCaseworker === currentUser.name && c.district === currentUser.district;
+    }
+    
+    // DISTRICT: Only see cases in their district
+    if (currentUser.role === "DISTRICT") {
+      return c.district === currentUser.district;
+    }
+    
+    // NATIONAL: See all cases (state-wide)
+    if (currentUser.role === "NATIONAL") {
+      return true;
+    }
+    
+    return false;
+  });
+
+  const filtered = accessibleCases.filter((c) => {
     const matchSearch =
       !search ||
       c.id.toLowerCase().includes(search.toLowerCase()) ||
@@ -43,6 +70,36 @@ export default function CasesPage() {
 
   return (
     <div className="p-5 space-y-5 max-w-7xl mx-auto">
+      {/* RBAC Info Banner for District Supervisor */}
+      {currentUser?.role === "DISTRICT" && (
+        <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <UserCheck size={18} className="text-indigo-600 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h4 className="font-semibold text-indigo-900 text-sm">District Supervisor View</h4>
+              <p className="text-xs text-indigo-700 mt-1">
+                You are viewing ALL cases in {currentUser.district} district, including work from all caseworkers: {Array.from(new Set(accessibleCases.map(c => c.assignedCaseworker))).join(", ")}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* RBAC Info Banner for Caseworker */}
+      {currentUser?.role === "CASEWORKER" && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <User size={18} className="text-blue-600 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h4 className="font-semibold text-blue-900 text-sm">Caseworker View</h4>
+              <p className="text-xs text-blue-700 mt-1">
+                You are viewing ONLY cases assigned to you ({currentUser.name}) in {currentUser.district} district.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Filters */}
       <div className="bg-white border border-gray-200 rounded-lg p-4">
         <div className="flex flex-wrap gap-3 items-center">

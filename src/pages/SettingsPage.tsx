@@ -1,6 +1,11 @@
 import { Settings, User, Bell, Shield, Globe } from "lucide-react";
+import { type UserSession } from "./LoginPage";
 
-export default function SettingsPage() {
+interface SettingsPageProps {
+  currentUser?: UserSession | null;
+}
+
+export default function SettingsPage({ currentUser }: SettingsPageProps) {
   return (
     <div className="p-5 max-w-2xl mx-auto space-y-5">
       <div className="bg-white border border-gray-200 rounded-lg p-5">
@@ -10,11 +15,11 @@ export default function SettingsPage() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[
-            { label: "Full Name", value: "Priya Deshmukh" },
-            { label: "Employee ID", value: "MH-CW-00142" },
-            { label: "Designation", value: "District Caseworker" },
-            { label: "District", value: "Nagpur" },
-            { label: "Official Email", value: "p.deshmukh@manas.gov.in" },
+            { label: "Full Name", value: currentUser?.name || "Not Available" },
+            { label: "Employee ID", value: currentUser?.officerId || "Not Available" },
+            { label: "Designation", value: currentUser?.role || "Not Available" },
+            { label: "District", value: currentUser?.district || "Not Available" },
+            { label: "Official Email", value: currentUser ? `${currentUser.officerId.toLowerCase()}@manas.gov.in` : "Not Available" },
             { label: "Contact", value: "9876543210" },
           ].map(({ label, value }) => (
             <div key={label}>

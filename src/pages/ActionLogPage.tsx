@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Plus, ClipboardList, X } from "lucide-react";
 import { mockActionLogs, mockCases, type ActionLog } from "../data/mockData";
+import { type UserSession } from "./LoginPage";
 
 const ACTION_TYPES = [
   "Counselling Referred",
@@ -19,8 +20,38 @@ const statusStyles: Record<string, string> = {
   "In Progress": "bg-blue-50 text-blue-700 border-blue-200",
 };
 
-export default function ActionLogPage() {
-  const [logs, setLogs] = useState<ActionLog[]>(mockActionLogs);
+interface ActionLogPageProps {
+  currentUser?: UserSession | null;
+}
+
+export default function ActionLogPage({ currentUser }: ActionLogPageProps) {
+  // RBAC: Get accessible case IDs based on role
+  const accessibleCaseIds = mockCases.filter((c) => {
+    if (!currentUser) return false;
+    
+    // CASEWORKER: Only see assigned cases
+    if (currentUser.role === "CASEWORKER") {
+      return c.assignedCaseworker === currentUser.name && c.district === currentUser.district;
+    }
+    
+    // DISTRICT: Only see cases in their district
+    if (currentUser.role === "DISTRICT") {
+      return c.district === currentUser.district;
+    }
+    
+    // NATIONAL: See all cases
+    if (currentUser.role === "NATIONAL") {
+      return true;
+    }
+    
+    return false;
+  }).map(c => c.id);
+
+  // Filter action logs to only show logs for accessible cases
+  const [logs, setLogs] = useState<ActionLog[]>(
+    mockActionLogs.filter(log => accessibleCaseIds.includes(log.caseId))
+  );
+  
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
     caseId: "",
@@ -35,7 +66,7 @@ export default function ActionLogPage() {
       id: "AL-" + (logs.length + 1).toString().padStart(3, "0"),
       dateTime: new Date().toISOString().slice(0, 16).replace("T", " "),
       caseId: form.caseId,
-      caseworker: "Priya Deshmukh",
+      caseworker: currentUser?.name || "Unknown",
       actionType: form.actionType,
       description: form.notes,
       status: "Completed",

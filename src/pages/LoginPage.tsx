@@ -2,8 +2,15 @@ import { useState } from "react";
 import { Shield, Eye, EyeOff, Lock, Info, ChevronRight } from "lucide-react";
 import { DISTRICTS } from "../data/mockData";
 
+export interface UserSession {
+  officerId: string;
+  name: string;
+  role: string;
+  district: string;
+}
+
 interface LoginPageProps {
-  onLogin: () => void;
+  onLogin: (user: UserSession) => void;
   onGoToRegister: () => void;
 }
 
@@ -50,7 +57,27 @@ export default function LoginPage({ onLogin, onGoToRegister }: LoginPageProps) {
       setError("Please fill in all required fields.");
       return;
     }
-    onLogin();
+
+    // Validate credentials
+    const user = DEMO_CREDENTIALS.find(
+      (cred) => 
+        cred.id === form.officerId && 
+        cred.password === form.password &&
+        cred.district === form.district
+    );
+
+    if (!user) {
+      setError("Invalid credentials. Please check your Officer ID, Password, and District.");
+      return;
+    }
+
+    // Pass user session to parent
+    onLogin({
+      officerId: user.id,
+      name: user.name,
+      role: user.role,
+      district: user.district,
+    });
   };
 
   const fillDemoCredentials = (cred: typeof DEMO_CREDENTIALS[0]) => {
