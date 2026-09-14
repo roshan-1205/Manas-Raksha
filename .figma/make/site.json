@@ -1,0 +1,11 @@
+{
+  "title": "Manas Raksha",
+  "description": "A professional frontend prototype for an AI-assisted mental health monitoring platform, designed to support atrocity victims through effective case management and communication.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
