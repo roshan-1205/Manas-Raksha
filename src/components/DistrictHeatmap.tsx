@@ -10,7 +10,7 @@ type Risk = keyof typeof riskColors;
 
 export default function DistrictHeatmap() {
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-5 h-full">
+    <div className="bg-white border border-gray-200 rounded-lg p-5">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-heading font-semibold text-gray-800">Caseworker Risk Heatmap</h3>
         <span className="text-xs text-gray-400 font-mono bg-gray-50 border border-gray-100 px-2 py-1 rounded">
@@ -18,7 +18,7 @@ export default function DistrictHeatmap() {
         </span>
       </div>
 
-      <div className="relative bg-slate-50 border border-gray-100 rounded-lg overflow-hidden" style={{ height: 280 }}>
+      <div className="relative bg-slate-50 border border-gray-100 rounded-lg overflow-hidden" style={{ height: 320 }}>
         <svg viewBox="0 0 100 100" className="w-full h-full">
           {/* Stylized Maharashtra outline */}
           <path
@@ -86,7 +86,7 @@ export default function DistrictHeatmap() {
         </div>
       </div>
 
-      <p className="text-xs text-gray-400 mt-3">
+      <p className="text-xs text-gray-400 mt-2">
         Visualization based on mock geographic data. Actual deployment will integrate district-level GIS data with appropriate authorization.
       </p>
     </div>

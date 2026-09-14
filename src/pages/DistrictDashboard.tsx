@@ -9,7 +9,9 @@ import {
   AlertCircle,
   RefreshCw,
   FileText,
+  X,
 } from "lucide-react";
+import { useState } from "react";
 import StatusCard from "../components/StatusCard";
 import DistrictHeatmap from "../components/DistrictHeatmap";
 import { mockCases, POLICE_STATIONS } from "../data/mockData";
@@ -26,6 +28,11 @@ export default function DistrictDashboard({ currentUser }: DistrictDashboardProp
   const highRiskCases = districtCases.filter((c) => c.riskLevel === "High");
   const unacknowledgedAlerts = districtCases.filter((c) => c.actionRequired).length;
   const overdueFollowups = districtCases.filter((c) => c.followUpStatus === "Overdue").length;
+
+  // State for modals
+  const [selectedCase, setSelectedCase] = useState<typeof districtCases[0] | null>(null);
+  const [escalateCase, setEscalateCase] = useState<typeof districtCases[0] | null>(null);
+  const [viewCaseworkerWork, setViewCaseworkerWork] = useState<string | null>(null);
 
   // Cases by police station (within THIS district only)
   const casesByStation = POLICE_STATIONS.map(station => ({
@@ -44,26 +51,6 @@ export default function DistrictDashboard({ currentUser }: DistrictDashboardProp
 
   return (
     <div className="p-5 space-y-6 max-w-7xl mx-auto">
-      {/* Role Banner */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-700 rounded-xl p-6 text-white shadow-lg">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold mb-2">District Supervisor Dashboard</h2>
-            <p className="text-indigo-100">
-              {currentUser.name} • {currentUser.officerId} • {currentUser.district} District
-            </p>
-            <p className="text-xs text-indigo-200 mt-2">
-              Supervisors oversee district cases, monitor response performance, review escalations, and ensure that follow-up actions are completed.
-            </p>
-          </div>
-          <div className="hidden md:block text-indigo-100 text-xs bg-indigo-800/30 px-3 py-2 rounded-lg">
-            <div className="font-semibold mb-1">Access Level</div>
-            <div>District-Wide View</div>
-            <div className="text-indigo-300 mt-1">{currentUser.district} Only</div>
-          </div>
-        </div>
-      </div>
-
       {/* Stats Cards - District-level ONLY */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatusCard 
@@ -197,7 +184,10 @@ export default function DistrictDashboard({ currentUser }: DistrictDashboardProp
                       </span>
                     </td>
                     <td className="py-3 px-2 text-center">
-                      <button className="text-xs text-indigo-600 hover:text-indigo-800 font-medium hover:underline">
+                      <button 
+                        onClick={() => setViewCaseworkerWork(cw.name)}
+                        className="text-xs text-indigo-600 hover:text-indigo-800 font-medium hover:underline"
+                      >
                         View All Work
                       </button>
                     </td>
@@ -239,10 +229,16 @@ export default function DistrictDashboard({ currentUser }: DistrictDashboardProp
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <button className="px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors">
+                    <button 
+                      onClick={() => setSelectedCase(c)}
+                      className="px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-colors"
+                    >
                       Review Details
                     </button>
-                    <button className="px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+                    <button 
+                      onClick={() => setEscalateCase(c)}
+                      className="px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                    >
                       Escalate to State
                     </button>
                   </div>
@@ -252,69 +248,6 @@ export default function DistrictDashboard({ currentUser }: DistrictDashboardProp
           </div>
         </div>
       )}
-
-      {/* What I Can Do */}
-      <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-5">
-        <h4 className="font-semibold text-indigo-900 text-sm mb-3 flex items-center gap-2">
-          <FileText size={16} />
-          What I Can Do as District Supervisor
-        </h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-xs text-indigo-800">
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full" />
-            View ALL cases in my district
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full" />
-            Monitor ALL caseworker activities
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full" />
-            View ALL action logs in district
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full" />
-            Review escalated cases
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full" />
-            Reassign cases between caseworkers
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full" />
-            Approve district-level interventions
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full" />
-            Monitor high-risk alert acknowledgment
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full" />
-            Escalate critical cases to state officials
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full" />
-            Review delayed/incomplete follow-ups
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full" />
-            Approve referrals per departmental procedure
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full" />
-            Review caseworker workload & performance
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-indigo-600 rounded-full" />
-            Generate district-level reports
-          </div>
-        </div>
-        <div className="mt-4 pt-4 border-t border-indigo-200">
-          <p className="text-xs text-indigo-800">
-            <strong>Full District Visibility:</strong> You have complete access to view all cases, caseworker actions, follow-ups, and logs within {currentUser.district} district for supervision and coordination.
-          </p>
-        </div>
-      </div>
 
       {/* District Performance Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -336,6 +269,313 @@ export default function DistrictDashboard({ currentUser }: DistrictDashboardProp
           <div className="text-xs text-purple-700 mt-1">In {currentUser.district} district</div>
         </div>
       </div>
+
+      {/* View Caseworker Work Modal */}
+      {viewCaseworkerWork && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+              <div>
+                <h3 className="font-heading font-semibold text-gray-900 text-lg">
+                  {viewCaseworkerWork}'s Work Summary
+                </h3>
+                <p className="text-sm text-gray-500 mt-1">All assigned cases and recent actions</p>
+              </div>
+              <button
+                onClick={() => setViewCaseworkerWork(null)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Caseworker Stats */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="text-xs font-semibold text-blue-800 mb-1">Assigned Cases</div>
+                  <div className="text-2xl font-bold text-blue-900">
+                    {districtCases.filter(c => c.assignedCaseworker === viewCaseworkerWork).length}
+                  </div>
+                </div>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="text-xs font-semibold text-green-800 mb-1">Completed Follow-ups</div>
+                  <div className="text-2xl font-bold text-green-900">
+                    {districtCases.filter(c => c.assignedCaseworker === viewCaseworkerWork && c.followUpStatus === "Completed").length}
+                  </div>
+                </div>
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <div className="text-xs font-semibold text-red-800 mb-1">Pending Actions</div>
+                  <div className="text-2xl font-bold text-red-900">
+                    {districtCases.filter(c => c.assignedCaseworker === viewCaseworkerWork && c.actionRequired).length}
+                  </div>
+                </div>
+              </div>
+
+              {/* Cases List */}
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-3">All Assigned Cases</h4>
+                <div className="space-y-3">
+                  {districtCases
+                    .filter(c => c.assignedCaseworker === viewCaseworkerWork)
+                    .map((c) => (
+                      <div key={c.id} className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors">
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-mono text-sm font-semibold text-gray-800">{c.id}</span>
+                              <RiskBadge risk={c.riskLevel} />
+                            </div>
+                            <div className="text-sm text-gray-800 font-medium">{c.victimName}</div>
+                          </div>
+                          <span className={`text-xs px-2 py-1 rounded font-medium ${
+                            c.followUpStatus === "Completed" ? "bg-green-100 text-green-700" :
+                            c.followUpStatus === "Overdue" ? "bg-red-100 text-red-700" :
+                            "bg-amber-100 text-amber-700"
+                          }`}>
+                            {c.followUpStatus}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-xs text-gray-600">
+                          <div><span className="font-semibold">Stage:</span> {c.stage}</div>
+                          <div><span className="font-semibold">Station:</span> {c.policeStation}</div>
+                          <div><span className="font-semibold">Last Check-in:</span> {c.lastCheckIn}</div>
+                          <div><span className="font-semibold">Protection:</span> {c.protectionStatus}</div>
+                        </div>
+                        {c.actionRequired && (
+                          <div className="mt-2 flex items-center gap-1.5 text-xs text-red-600 font-medium">
+                            <AlertCircle size={14} />
+                            Action Required
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 p-4 flex justify-end">
+              <button
+                onClick={() => setViewCaseworkerWork(null)}
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Review Details Modal */}
+      {selectedCase && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+              <div>
+                <h3 className="font-heading font-semibold text-gray-900 text-lg">Case Details</h3>
+                <p className="text-sm text-gray-500 mt-1">{selectedCase.id}</p>
+              </div>
+              <button
+                onClick={() => setSelectedCase(null)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-lg font-semibold text-gray-900">{selectedCase.victimName}</div>
+                  <div className="text-sm text-gray-500">Victim ID: {selectedCase.victimId}</div>
+                </div>
+                <RiskBadge risk={selectedCase.riskLevel} />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <div className="text-gray-500 font-semibold mb-1">Case ID</div>
+                  <div className="font-mono text-gray-800">{selectedCase.id}</div>
+                </div>
+                <div>
+                  <div className="text-gray-500 font-semibold mb-1">Case Reference</div>
+                  <div className="font-mono text-gray-800">{selectedCase.caseRefNo}</div>
+                </div>
+                <div>
+                  <div className="text-gray-500 font-semibold mb-1">District</div>
+                  <div className="text-gray-800">{selectedCase.district}</div>
+                </div>
+                <div>
+                  <div className="text-gray-500 font-semibold mb-1">Police Station</div>
+                  <div className="text-gray-800">{selectedCase.policeStation}</div>
+                </div>
+                <div>
+                  <div className="text-gray-500 font-semibold mb-1">Stage</div>
+                  <div className="text-gray-800">{selectedCase.stage}</div>
+                </div>
+                <div>
+                  <div className="text-gray-500 font-semibold mb-1">Assigned Caseworker</div>
+                  <div className="text-gray-800">{selectedCase.assignedCaseworker}</div>
+                </div>
+                <div>
+                  <div className="text-gray-500 font-semibold mb-1">Last Check-in</div>
+                  <div className="text-gray-800">{selectedCase.lastCheckIn}</div>
+                </div>
+                <div>
+                  <div className="text-gray-500 font-semibold mb-1">Follow-up Status</div>
+                  <div className={`font-medium ${
+                    selectedCase.followUpStatus === "Completed" ? "text-green-600" :
+                    selectedCase.followUpStatus === "Overdue" ? "text-red-600" :
+                    "text-amber-600"
+                  }`}>
+                    {selectedCase.followUpStatus}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-gray-500 font-semibold mb-1">Protection Status</div>
+                  <div className={`font-medium ${
+                    selectedCase.protectionStatus === "Active" ? "text-green-600" : 
+                    selectedCase.protectionStatus === "Pending" ? "text-amber-600" : 
+                    "text-gray-600"
+                  }`}>
+                    {selectedCase.protectionStatus}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-gray-500 font-semibold mb-1">Registered Date</div>
+                  <div className="text-gray-800">{selectedCase.registeredDate}</div>
+                </div>
+              </div>
+
+              {selectedCase.actionRequired && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <div className="flex items-center gap-2 text-red-800 font-semibold mb-2">
+                    <AlertCircle size={18} />
+                    Action Required
+                  </div>
+                  <p className="text-sm text-red-700">
+                    This case requires immediate supervisor review and intervention.
+                  </p>
+                </div>
+              )}
+
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <h4 className="font-semibold text-gray-800 mb-2">Victim Information</h4>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="text-gray-500 font-semibold">Age:</span>
+                    <span className="ml-2 text-gray-800">{selectedCase.age}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 font-semibold">Gender:</span>
+                    <span className="ml-2 text-gray-800">{selectedCase.gender}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 font-semibold">Language:</span>
+                    <span className="ml-2 text-gray-800">{selectedCase.language}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 font-semibold">Contact Preference:</span>
+                    <span className="ml-2 text-gray-800">{selectedCase.contactPreference}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 p-4 flex justify-end gap-2">
+              <button
+                onClick={() => setSelectedCase(null)}
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  setEscalateCase(selectedCase);
+                  setSelectedCase(null);
+                }}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Escalate to State
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Escalate to State Modal */}
+      {escalateCase && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-xl w-full">
+            <div className="bg-red-600 text-white p-4 rounded-t-lg">
+              <div className="flex items-center gap-2">
+                <AlertTriangle size={24} />
+                <h3 className="font-heading font-semibold text-lg">Escalate Case to State Level</h3>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <p className="text-sm text-red-800">
+                  You are about to escalate this case to the State Administrator. This action should only be taken for critical cases requiring state-level intervention.
+                </p>
+              </div>
+
+              <div className="border border-gray-200 rounded-lg p-4">
+                <div className="text-sm font-semibold text-gray-800 mb-2">Case Details</div>
+                <div className="space-y-1 text-sm text-gray-700">
+                  <div><span className="font-semibold">Case ID:</span> {escalateCase.id}</div>
+                  <div><span className="font-semibold">Victim:</span> {escalateCase.victimName}</div>
+                  <div><span className="font-semibold">Risk Level:</span> <RiskBadge risk={escalateCase.riskLevel} /></div>
+                  <div><span className="font-semibold">District:</span> {escalateCase.district}</div>
+                  <div><span className="font-semibold">Caseworker:</span> {escalateCase.assignedCaseworker}</div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-800 mb-2">
+                  Escalation Reason <span className="text-red-600">*</span>
+                </label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                  rows={4}
+                  placeholder="Provide detailed reason for escalating this case to state level..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-800 mb-2">
+                  Recommended Action
+                </label>
+                <textarea
+                  className="w-full border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+                  rows={3}
+                  placeholder="Suggest what state-level action or support is needed..."
+                />
+              </div>
+            </div>
+
+            <div className="bg-gray-50 border-t border-gray-200 p-4 flex justify-end gap-2">
+              <button
+                onClick={() => setEscalateCase(null)}
+                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  alert(`Case ${escalateCase.id} has been escalated to State Administrator for review.`);
+                  setEscalateCase(null);
+                }}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center gap-2"
+              >
+                <AlertTriangle size={16} />
+                Confirm Escalation
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

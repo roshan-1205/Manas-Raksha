@@ -9,8 +9,11 @@ import {
   Calendar,
   ArrowUpCircle,
   FileText,
+  X,
 } from "lucide-react";
+import { useState } from "react";
 import StatusCard from "../components/StatusCard";
+import DistrictHeatmap from "../components/DistrictHeatmap";
 import { mockCases } from "../data/mockData";
 import RiskBadge from "../components/RiskBadge";
 import { type UserSession } from "./LoginPage";
@@ -30,6 +33,12 @@ export default function CaseworkerDashboard({ currentUser }: CaseworkerDashboard
     (c) => c.followUpStatus === "Pending" || c.followUpStatus === "Overdue"
   );
   const requiresAction = myAssignedCases.filter((c) => c.actionRequired);
+
+  // State for modals/dialogs
+  const [selectedCase, setSelectedCase] = useState<typeof myAssignedCases[0] | null>(null);
+  const [recordActionCase, setRecordActionCase] = useState<typeof myAssignedCases[0] | null>(null);
+  const [escalateCase, setEscalateCase] = useState<typeof myAssignedCases[0] | null>(null);
+  const [showAllActions, setShowAllActions] = useState(false);
 
   const recentActions = [
     {
@@ -66,25 +75,6 @@ export default function CaseworkerDashboard({ currentUser }: CaseworkerDashboard
 
   return (
     <div className="p-5 space-y-6 max-w-7xl mx-auto">
-      {/* Role Banner */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white shadow-lg">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold mb-2">Caseworker Dashboard</h2>
-            <p className="text-blue-100">
-              {currentUser.name} • {currentUser.officerId} • {currentUser.district} District
-            </p>
-            <p className="text-xs text-blue-200 mt-2">
-              Caseworkers manage assigned cases, review alerts, coordinate support, and record follow-up actions.
-            </p>
-          </div>
-          <div className="hidden md:block text-blue-100 text-xs bg-blue-800/30 px-3 py-2 rounded-lg">
-            <div className="font-semibold mb-1">Access Level</div>
-            <div>Assigned Cases Only</div>
-          </div>
-        </div>
-      </div>
-
       {/* Stats Cards - Only MY assigned cases */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatusCard 
@@ -119,7 +109,12 @@ export default function CaseworkerDashboard({ currentUser }: CaseworkerDashboard
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* My Assigned Cases - ONLY what I can see */}
-        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-lg p-5">
+        <div className="lg:col-span-2 space-y-5">
+          {/* District Heatmap - Shows my district case distribution */}
+          <DistrictHeatmap />
+          
+          {/* My Cases List */}
+          <div className="bg-white border border-gray-200 rounded-lg p-5">
           <h3 className="font-heading font-semibold text-gray-800 mb-4 flex items-center gap-2">
             <FolderOpen size={18} className="text-blue-600" />
             My Assigned Cases
@@ -171,15 +166,24 @@ export default function CaseworkerDashboard({ currentUser }: CaseworkerDashboard
 
                   {/* Action Buttons */}
                   <div className="mt-3 pt-3 border-t border-gray-100 flex gap-2">
-                    <button className="flex-1 px-3 py-2 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                    <button 
+                      onClick={() => setSelectedCase(c)}
+                      className="flex-1 px-3 py-2 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+                    >
                       View Details
                     </button>
-                    <button className="flex-1 px-3 py-2 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+                    <button 
+                      onClick={() => setRecordActionCase(c)}
+                      className="flex-1 px-3 py-2 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
+                    >
                       Record Action
                     </button>
                     {c.actionRequired && (
-                      <button className="px-3 py-2 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
-                        <ArrowUpCircle size={14} className="inline" /> Escalate
+                      <button 
+                        onClick={() => setEscalateCase(c)}
+                        className="px-3 py-2 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors flex items-center gap-1"
+                      >
+                        <ArrowUpCircle size={14} /> Escalate
                       </button>
                     )}
                   </div>
@@ -187,6 +191,7 @@ export default function CaseworkerDashboard({ currentUser }: CaseworkerDashboard
               ))}
             </div>
           )}
+        </div>
         </div>
 
         {/* Recent Actions */}
@@ -212,50 +217,273 @@ export default function CaseworkerDashboard({ currentUser }: CaseworkerDashboard
             })}
           </div>
           
-          <button className="mt-4 w-full px-3 py-2 text-xs font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+          <button 
+            onClick={() => setShowAllActions(true)}
+            className="mt-4 w-full px-3 py-2 text-xs font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+          >
             View All My Actions
           </button>
         </div>
       </div>
 
-      {/* What I Can Do */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-5">
-        <h4 className="font-semibold text-blue-900 text-sm mb-3">What I Can Do</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-blue-800">
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
-            View my assigned cases
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
-            Complete/record human review of alerts
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
-            Contact victim through approved channels
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
-            Record counselling/medical/legal referrals
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
-            Update action status
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
-            Add factual follow-up notes
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
-            Escalate urgent cases to supervisor
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
-            Mark follow-up completion status
+      {/* View Details Modal */}
+      {selectedCase && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">Case Details</h3>
+                  <p className="text-sm text-gray-500 font-mono">{selectedCase.id}</p>
+                </div>
+                <button onClick={() => setSelectedCase(null)} className="text-gray-400 hover:text-gray-600">
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-semibold text-gray-600">Victim Name</label>
+                    <p className="text-sm text-gray-900">{selectedCase.victimName}</p>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-600">Risk Level</label>
+                    <div className="mt-1"><RiskBadge risk={selectedCase.riskLevel} /></div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-600">District</label>
+                    <p className="text-sm text-gray-900">{selectedCase.district}</p>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-600">Police Station</label>
+                    <p className="text-sm text-gray-900">{selectedCase.policeStation}</p>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-600">Stage</label>
+                    <p className="text-sm text-gray-900">{selectedCase.stage}</p>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-600">Last Check-in</label>
+                    <p className="text-sm text-gray-900">{selectedCase.lastCheckIn}</p>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-600">Follow-up Status</label>
+                    <p className="text-sm text-gray-900">{selectedCase.followUpStatus}</p>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-600">Protection Status</label>
+                    <p className="text-sm text-gray-900">{selectedCase.protectionStatus}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 flex gap-2">
+                <button 
+                  onClick={() => {
+                    setSelectedCase(null);
+                    setRecordActionCase(selectedCase);
+                  }}
+                  className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                >
+                  Record Action
+                </button>
+                <button 
+                  onClick={() => setSelectedCase(null)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Record Action Modal */}
+      {recordActionCase && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-lg w-full">
+            <div className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">Record Action</h3>
+                  <p className="text-sm text-gray-500">Case: {recordActionCase.id} - {recordActionCase.victimName}</p>
+                </div>
+                <button onClick={() => setRecordActionCase(null)} className="text-gray-400 hover:text-gray-600">
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Action Type</label>
+                  <select className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option>Completed phone check-in</option>
+                    <option>SMS wellness check sent</option>
+                    <option>Medical referral recorded</option>
+                    <option>Counselling referral</option>
+                    <option>Legal aid referral</option>
+                    <option>Protection support initiated</option>
+                    <option>Victim contacted</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
+                  <textarea 
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" 
+                    rows={4}
+                    placeholder="Enter factual follow-up notes..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Next Follow-up Date</label>
+                  <input 
+                    type="date" 
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                  />
+                </div>
+              </div>
+              
+              <div className="mt-6 flex gap-2">
+                <button 
+                  onClick={() => {
+                    setRecordActionCase(null);
+                    alert("Action recorded successfully!");
+                  }}
+                  className="flex-1 px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+                >
+                  Save Action
+                </button>
+                <button 
+                  onClick={() => setRecordActionCase(null)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Escalate Modal */}
+      {escalateCase && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-lg w-full">
+            <div className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <AlertTriangle size={20} className="text-red-600" />
+                    Escalate Case to Supervisor
+                  </h3>
+                  <p className="text-sm text-gray-500">Case: {escalateCase.id} - {escalateCase.victimName}</p>
+                </div>
+                <button onClick={() => setEscalateCase(null)} className="text-gray-400 hover:text-gray-600">
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                  <p className="text-xs text-red-800">
+                    <strong>Current Risk Level:</strong> {escalateCase.riskLevel}
+                  </p>
+                  <p className="text-xs text-red-800 mt-1">
+                    <strong>Last Check-in:</strong> {escalateCase.lastCheckIn}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Reason for Escalation</label>
+                  <select className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option>High-risk situation requiring immediate attention</option>
+                    <option>Victim not responding to contact attempts</option>
+                    <option>Safety concerns identified</option>
+                    <option>Requires district-level intervention</option>
+                    <option>Protection order needed</option>
+                    <option>Other urgent matter</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Details</label>
+                  <textarea 
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" 
+                    rows={4}
+                    placeholder="Provide details about why this case requires escalation..."
+                  />
+                </div>
+              </div>
+              
+              <div className="mt-6 flex gap-2">
+                <button 
+                  onClick={() => {
+                    setEscalateCase(null);
+                    alert("Case escalated to District Supervisor successfully!");
+                  }}
+                  className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                >
+                  Escalate to Supervisor
+                </button>
+                <button 
+                  onClick={() => setEscalateCase(null)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View All Actions Modal */}
+      {showAllActions && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">All My Actions</h3>
+                  <p className="text-sm text-gray-500">{currentUser.name} - Action History</p>
+                </div>
+                <button onClick={() => setShowAllActions(false)} className="text-gray-400 hover:text-gray-600">
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="space-y-3">
+                {recentActions.map((activity) => {
+                  const Icon = activity.icon;
+                  return (
+                    <div key={activity.id} className="flex items-start gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+                      <div className={`w-10 h-10 rounded-lg ${activity.bg} flex items-center justify-center shrink-0`}>
+                        <Icon size={18} className={activity.color} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-gray-800">{activity.activity}</div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {activity.victimName} • {activity.time}
+                        </div>
+                        <div className="text-xs text-gray-400 font-mono mt-0.5">{activity.caseId}</div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              <div className="mt-6">
+                <button 
+                  onClick={() => setShowAllActions(false)}
+                  className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* High Priority Alert */}
       {highRiskCases.length > 0 && (

@@ -100,7 +100,19 @@ export default function App() {
       <TokenVerificationPage
         token={cctnsToken}
         onVerified={(role, officer) => {
-          // Route to appropriate dashboard based on role
+          // Create UserSession from CCTNS officer data
+          const user: UserSession = {
+            name: officer.name,
+            officerId: officer.emp_id,
+            role: officer.rank as "CASEWORKER" | "DISTRICT" | "NATIONAL",
+            district: officer.district,
+          };
+          
+          // Set user and store in localStorage
+          setCurrentUser(user);
+          localStorage.setItem("manasRakshaUser", JSON.stringify(user));
+          
+          // Route to app
           setAuth("app");
           setCurrentPage("dashboard");
         }}

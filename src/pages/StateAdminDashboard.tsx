@@ -42,25 +42,6 @@ export default function StateAdminDashboard({ currentUser }: StateAdminDashboard
 
   return (
     <div className="p-5 space-y-6 max-w-7xl mx-auto">
-      {/* Role Banner */}
-      <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 rounded-xl p-6 text-white shadow-lg">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold mb-2">State Administration Dashboard</h2>
-            <p className="text-purple-100">
-              {currentUser.name} • {currentUser.officerId} • Maharashtra State
-            </p>
-            <p className="text-xs text-purple-200 mt-2">
-              State Administrators monitor state-wide trends, supervise district performance, support resource planning, and ensure compliance with approved procedures.
-            </p>
-          </div>
-          <div className="hidden md:block text-purple-100 text-xs bg-purple-800/30 px-3 py-2 rounded-lg">
-            <div className="font-semibold mb-1">Access Level</div>
-            <div>State-Wide Aggregated View</div>
-          </div>
-        </div>
-      </div>
-
       {/* State-wide Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatusCard 
@@ -246,61 +227,6 @@ export default function StateAdminDashboard({ currentUser }: StateAdminDashboard
               Aurangabad district has the lowest resolution rate (69%). Consider allocating additional resources or training.
             </p>
           </div>
-        </div>
-      </div>
-
-      {/* What I Can Do */}
-      <div className="bg-purple-50 border border-purple-200 rounded-lg p-5">
-        <h4 className="font-semibold text-purple-900 text-sm mb-3 flex items-center gap-2">
-          <Activity size={16} />
-          What I Can Do as State Administrator
-        </h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-xs text-purple-800">
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-purple-600 rounded-full" />
-            View state-wide aggregated dashboards
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-purple-600 rounded-full" />
-            Compare district-level performance
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-purple-600 rounded-full" />
-            Monitor unresolved high-priority cases
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-purple-600 rounded-full" />
-            Review district response times
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-purple-600 rounded-full" />
-            Allocate resources across districts
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-purple-600 rounded-full" />
-            Approve state-level escalation workflows
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-purple-600 rounded-full" />
-            Manage district & supervisor accounts
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-purple-600 rounded-full" />
-            Review audit and compliance reports
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-purple-600 rounded-full" />
-            Configure approved reporting periods
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-purple-600 rounded-full" />
-            Coordinate with relevant departments
-          </div>
-        </div>
-        <div className="mt-4 pt-4 border-t border-purple-200">
-          <p className="text-xs text-purple-700">
-            <strong>Note:</strong> State Administrator does not routinely view private counselling conversations or raw voice recordings. Access is controlled and aggregated for privacy protection.
-          </p>
         </div>
       </div>
     </div>

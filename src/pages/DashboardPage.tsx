@@ -80,8 +80,79 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
-        <div className="lg:col-span-3">
+        <div className="lg:col-span-3 space-y-5">
           <DistrictHeatmap />
+          
+          <div className="bg-white border border-gray-200 rounded-lg p-5">
+            <h3 className="font-heading font-semibold text-gray-800 text-lg mb-4">My Assigned Cases</h3>
+            <div className="space-y-4">
+              {mockCases.slice(0, 3).map((c) => (
+                <div key={c.id} className="p-4 border border-gray-200 rounded-lg">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <div className="font-mono text-sm font-semibold text-gray-800 mb-1">{c.id}</div>
+                      {c.followUpStatus === "Overdue" && (
+                        <div className="inline-block px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded mb-2">
+                          Overdue
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2 mb-3">
+                    <div className="text-sm">
+                      <span className="font-semibold text-gray-700">Victim:</span>
+                      <span className="ml-1 text-gray-800">{c.victimName}</span>
+                    </div>
+                    <div className="text-sm">
+                      <span className="font-semibold text-gray-700">Stage:</span>
+                      <span className="ml-1 text-gray-800">{c.stage}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5 text-sm mb-3">
+                    <div>
+                      <span className="font-semibold text-gray-700">Station:</span>
+                      <span className="ml-1 text-gray-800">{c.policeStation}</span>
+                    </div>
+                    <div>
+                      <span className="font-semibold text-gray-700">Last Check-in:</span>
+                      <span className="ml-1 text-gray-800">{c.lastCheckIn}</span>
+                    </div>
+                    <div>
+                      <span className="font-semibold text-gray-700">Protection:</span>
+                      <span className={`ml-1 font-medium ${
+                        c.protectionStatus === "Active" ? "text-green-600" : 
+                        c.protectionStatus === "Pending" ? "text-amber-600" : 
+                        "text-gray-600"
+                      }`}>
+                        {c.protectionStatus}
+                      </span>
+                    </div>
+                  </div>
+
+                  {c.actionRequired && (
+                    <div className="flex items-center gap-1.5 text-sm text-red-600 font-medium mb-3 py-2">
+                      <AlertCircle size={16} />
+                      <span>Human review required</span>
+                    </div>
+                  )}
+
+                  <div className="flex gap-2 pt-3 border-t border-gray-100">
+                    <button className="px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                      View Details
+                    </button>
+                    <button className="px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                      Record Action
+                    </button>
+                    <button className="px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded transition-colors">
+                      Escalate
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="lg:col-span-2 space-y-4">
