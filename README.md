@@ -1,6 +1,44 @@
-# Manas Raksha
+# Manas Raksha (मानस रक्षा)
 
-**Manas Raksha** is a victim-centric case management and monitoring platform designed to support survivors of violence through their journey from complaint registration to rehabilitation. Built for law enforcement agencies and support organizations, it provides real-time tracking, AI-powered risk assessment, and secure integration with the Crime and Criminal Tracking Network & Systems (CCTNS).
+<div align="center">
+
+![Manas Raksha](https://img.shields.io/badge/Manas%20Raksha-Mind%20Protection-blue?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Demo-green?style=for-the-badge)
+![License](https://img.shields.io/badge/License-Proprietary-red?style=for-the-badge)
+
+### AI-Assisted Mental Health Monitoring & Victim Support System
+
+**Integrated with Crime and Criminal Tracking Network & Systems (CCTNS)**
+
+[🌐 Live Demo](https://manas-raksha.vercel.app/) | [📖 Documentation](#-overview) | [🚀 Getting Started](#-getting-started)
+
+</div>
+
+---
+
+## 📋 About
+
+**Manas Raksha** (meaning "Mind Protection" in Sanskrit) is a comprehensive, victim-centric case management and mental health monitoring platform designed to support survivors of violence through their entire journey—from complaint registration to rehabilitation and post-case follow-up.
+
+Built for law enforcement agencies, caseworkers, and support organizations, this platform bridges the critical gap between police systems and victim support services, ensuring that no survivor falls through the cracks during their case lifecycle.
+
+### 🎯 Mission
+
+To provide a secure, integrated, and intelligent platform that empowers law enforcement and support workers to deliver timely, compassionate, and effective assistance to victims of crime while maintaining strict compliance with data protection and privacy regulations.
+
+### ✨ Core Capabilities
+
+**Manas Raksha** combines real-time case tracking, AI-powered risk assessment, and seamless integration with India's Crime and Criminal Tracking Network & Systems (CCTNS) to provide:
+
+- 🔐 **Secure CCTNS Integration** - Token-based authentication with existing police infrastructure
+- 📊 **Real-time Dashboards** - District-level overview with comprehensive case statistics
+- 🗂️ **End-to-End Case Management** - Track cases through 8 distinct lifecycle stages
+- 👥 **Victim-Centric Monitoring** - Consent-based tracking respecting privacy and dignity
+- 🤖 **AI Risk Assessment** - Predictive analytics to identify high-risk cases requiring immediate intervention
+- 📝 **Comprehensive Action Logging** - Chronological record of all interventions and follow-ups
+- 🗺️ **Geographic Visualization** - District heatmaps showing case distribution and risk levels
+- 📱 **Multi-Channel Communication** - SMS, WhatsApp, and voice support respecting victim preferences
+- 🔒 **Privacy & Compliance First** - Built with data protection and legal compliance at its core
 
 ## 🎯 Overview
 
@@ -30,7 +68,7 @@ Manas Raksha (मानस रक्षा) means "Mind Protection" in Sanskrit.
 
 1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
+   git clone <https://github.com/roshan-1205/Manas-Raksha.git>
    cd "Manas Raksha"
    ```
 
