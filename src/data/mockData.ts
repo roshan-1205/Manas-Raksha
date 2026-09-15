@@ -422,27 +422,15 @@ export const heatmapData = [
   { area: "Kolhapur City", district: "Kolhapur", risk: "Low", cases: 2, x: 10, y: 82 },
 ];
 
-// Genuine data from Government of India / NCRB 2023
-export const nationalStats = {
-  scCases2023: 57766, // SC cases registered under SC/ST PoA Act, 2023
-  stCases2023: 12959, // ST cases registered under SC/ST PoA Act, 2023
-  totalCases2023: 70725, // Combined SC/ST cases, 2023
-  dataSource: "NCRB figures reported through Government of India",
-};
-
-// Pilot metrics - to be measured during deployment
 export const dashboardStats = {
-  totalActiveCases: "To be measured during pilot",
-  registeredVictims: "To be measured during pilot",
-  highRiskVictims: "To be measured during pilot",
-  pendingFollowUps: "To be measured during pilot",
-  counsellingReferrals: "To be measured during pilot",
-  protectionCases: "To be measured during pilot",
-  immediateActionRequired: "To be measured during pilot",
-  completedFollowUps: "To be measured during pilot",
-  activeCaseworkers: "To be configured by department",
-  avgResponseTime: "To be measured during pilot",
-  resolutionRate: "To be measured during pilot",
+  totalActiveCases: 6,
+  registeredVictims: 62,
+  highRiskVictims: 4,
+  pendingFollowUps: 3,
+  counsellingReferrals: 23,
+  protectionCases: 9,
+  immediateActionRequired: 1,
+  completedFollowUps: 31,
 };
 
 export const CASE_STAGES: CaseStage[] = [
