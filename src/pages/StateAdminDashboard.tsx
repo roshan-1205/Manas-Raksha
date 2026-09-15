@@ -7,6 +7,7 @@ import {
   MapPin,
   Award,
   Activity,
+  Shield,
 } from "lucide-react";
 import StatusCard from "../components/StatusCard";
 import { dashboardStats, DISTRICTS } from "../data/mockData";
@@ -17,158 +18,202 @@ interface StateAdminDashboardProps {
 }
 
 export default function StateAdminDashboard({ currentUser }: StateAdminDashboardProps) {
-  // State-wide statistics
-  const districtData = [
-    { district: "Nagpur", cases: 42, highRisk: 8, caseworkers: 12, resolution: 73 },
-    { district: "Mumbai", cases: 68, highRisk: 15, caseworkers: 24, resolution: 71 },
-    { district: "Pune", cases: 54, highRisk: 11, caseworkers: 18, resolution: 78 },
-    { district: "Nashik", cases: 31, highRisk: 6, caseworkers: 10, resolution: 75 },
-    { district: "Aurangabad", cases: 28, highRisk: 5, caseworkers: 8, resolution: 69 },
-    { district: "Solapur", cases: 23, highRisk: 4, caseworkers: 7, resolution: 72 },
+  // Genuine national statistics from NCRB 2023
+  const nationalContext = {
+    scCases2023: 57766,
+    stCases2023: 12959,
+    totalCases2023: 70725,
+  };
+
+  // State-level context (example from Uttar Pradesh)
+  // Note: These are state-level crime statistics, not Manas Raksha operational data
+  const stateContextData = [
+    { 
+      state: "Uttar Pradesh", 
+      cases: 15130, // SC cases in 2023 (state context)
+      highRisk: "To be measured", 
+      caseworkers: "Not available", 
+      resolution: "To be measured",
+      note: "State-level SC cases, 2023"
+    },
+    { 
+      state: "Rajasthan", 
+      cases: "From NCRB extract", 
+      highRisk: "To be measured", 
+      caseworkers: "Not available", 
+      resolution: "To be measured",
+      note: "Pending authorised data access"
+    },
+    { 
+      state: "Madhya Pradesh", 
+      cases: "From NCRB extract", 
+      highRisk: "To be measured", 
+      caseworkers: "Not available", 
+      resolution: "To be measured",
+      note: "Pending authorised data access"
+    },
+    { 
+      state: "Maharashtra", 
+      cases: "From NCRB extract", 
+      highRisk: "To be measured", 
+      caseworkers: "Not available", 
+      resolution: "To be measured",
+      note: "Pending authorised data access"
+    },
   ];
 
-  const totalCases = districtData.reduce((sum, d) => sum + d.cases, 0);
-  const totalHighRisk = districtData.reduce((sum, d) => sum + d.highRisk, 0);
-  const totalCaseworkers = districtData.reduce((sum, d) => sum + d.caseworkers, 0);
-  const avgResolution = Math.round(districtData.reduce((sum, d) => sum + d.resolution, 0) / districtData.length);
-
-  // Monthly trends
+  // Monthly trends - will be available after pilot deployment
   const monthlyData = [
-    { month: "Jan", cases: 178, resolved: 132 },
-    { month: "Feb", cases: 195, resolved: 145 },
-    { month: "Mar", cases: 212, resolved: 158 },
-    { month: "Apr", cases: 246, resolved: 182 },
+    { month: "Jan", cases: "—", resolved: "—", alerts: "—", interventions: "—" },
+    { month: "Feb", cases: "—", resolved: "—", alerts: "—", interventions: "—" },
+    { month: "Mar", cases: "—", resolved: "—", alerts: "—", interventions: "—" },
+    { month: "Apr", cases: "—", resolved: "—", alerts: "—", interventions: "—" },
+    { month: "May", cases: "—", resolved: "—", alerts: "—", interventions: "—" },
+    { month: "Jun", cases: "—", resolved: "—", alerts: "—", interventions: "—" },
   ];
 
   return (
     <div className="p-5 space-y-6 max-w-7xl mx-auto">
-      {/* State-wide Stats */}
+      {/* National Case Context */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <h3 className="font-semibold text-blue-900 text-sm mb-2">National Case Context (2023)</h3>
+        <div className="grid grid-cols-3 gap-4 text-xs">
+          <div>
+            <div className="text-blue-600 font-medium">SC Cases</div>
+            <div className="text-xl font-bold text-blue-900">{nationalContext.scCases2023.toLocaleString()}</div>
+          </div>
+          <div>
+            <div className="text-blue-600 font-medium">ST Cases</div>
+            <div className="text-xl font-bold text-blue-900">{nationalContext.stCases2023.toLocaleString()}</div>
+          </div>
+          <div>
+            <div className="text-blue-600 font-medium">Total SC/ST Cases</div>
+            <div className="text-xl font-bold text-blue-900">{nationalContext.totalCases2023.toLocaleString()}</div>
+          </div>
+        </div>
+        <p className="text-xs text-blue-700 mt-2">
+          Data source: NCRB figures reported through Government of India
+        </p>
+      </div>
+
+      {/* Pilot Metrics - Placeholder */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatusCard 
-          label="Total State Cases" 
-          value={totalCases} 
-          Icon={FolderOpen} 
-          color="blue" 
-          note="Across all districts"
-        />
-        <StatusCard 
           label="High-Risk Cases" 
-          value={totalHighRisk} 
+          value="Pilot" 
           Icon={AlertTriangle} 
           color="red" 
-          note="Statewide priority" 
+          note="To be measured during pilot"
         />
         <StatusCard 
-          label="Total Caseworkers" 
-          value={totalCaseworkers} 
+          label="Active Caseworkers" 
+          value="TBD" 
           Icon={Users} 
           color="green" 
-          note="Active personnel" 
+          note="To be configured by department" 
         />
         <StatusCard 
-          label="Avg. Resolution Rate" 
-          value={`${avgResolution}%`} 
+          label="Avg. Response Time" 
+          value="Pilot" 
           Icon={TrendingUp} 
           color="purple" 
-          note="State average" 
+          note="To be measured during pilot" 
+        />
+        <StatusCard 
+          label="Resolution Rate" 
+          value="Pilot" 
+          Icon={BarChart3} 
+          color="blue" 
+          note="To be measured during pilot" 
         />
       </div>
 
-      {/* District Comparison */}
+      {/* State-Level Context Overview */}
       <div className="bg-white border border-gray-200 rounded-lg p-5">
-        <h3 className="font-heading font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <h3 className="font-heading font-semibold text-gray-800 mb-2 flex items-center gap-2">
           <MapPin size={18} className="text-blue-600" />
-          District-wise Performance Overview
+          State-Level Context Overview
         </h3>
+        <p className="text-xs text-gray-600 mb-4">
+          State-level crime statistics shown for context. District-level Manas Raksha metrics will be populated after authorised CCTNS/departmental data access and pilot deployment.
+        </p>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left text-xs font-semibold text-gray-600 pb-3">District</th>
-                <th className="text-center text-xs font-semibold text-gray-600 pb-3">Total Cases</th>
-                <th className="text-center text-xs font-semibold text-gray-600 pb-3">High-Risk</th>
-                <th className="text-center text-xs font-semibold text-gray-600 pb-3">Caseworkers</th>
-                <th className="text-center text-xs font-semibold text-gray-600 pb-3">Resolution Rate</th>
-                <th className="text-center text-xs font-semibold text-gray-600 pb-3">Performance</th>
+                <th className="text-left text-xs font-semibold text-gray-600 pb-3 px-2">State</th>
+                <th className="text-center text-xs font-semibold text-gray-600 pb-3 px-2">Context Cases</th>
+                <th className="text-center text-xs font-semibold text-gray-600 pb-3 px-2">High-Risk</th>
+                <th className="text-center text-xs font-semibold text-gray-600 pb-3 px-2">Caseworkers</th>
+                <th className="text-center text-xs font-semibold text-gray-600 pb-3 px-2">Resolution Rate</th>
+                <th className="text-left text-xs font-semibold text-gray-600 pb-3 px-2">Note</th>
               </tr>
             </thead>
             <tbody>
-              {districtData.map((d) => (
-                <tr key={d.district} className="border-b border-gray-100 last:border-0">
-                  <td className="py-3 text-sm font-medium text-gray-800">{d.district}</td>
-                  <td className="py-3 text-center text-sm text-gray-700">{d.cases}</td>
-                  <td className="py-3 text-center">
-                    <span className="inline-block px-2 py-0.5 text-xs font-medium bg-red-100 text-red-700 rounded">
-                      {d.highRisk}
-                    </span>
+              {stateContextData.map((s) => (
+                <tr key={s.state} className="border-b border-gray-100 last:border-0">
+                  <td className="py-3 px-2 text-sm font-medium text-gray-800">{s.state}</td>
+                  <td className="py-3 px-2 text-center text-sm text-gray-700">
+                    {typeof s.cases === 'number' ? s.cases.toLocaleString() : s.cases}
                   </td>
-                  <td className="py-3 text-center text-sm text-gray-700">{d.caseworkers}</td>
-                  <td className="py-3 text-center">
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="flex-1 max-w-[80px] bg-gray-100 rounded-full h-2">
-                        <div 
-                          className="bg-blue-600 h-2 rounded-full" 
-                          style={{ width: `${d.resolution}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-semibold text-gray-700 min-w-[35px]">{d.resolution}%</span>
-                    </div>
-                  </td>
-                  <td className="py-3 text-center">
-                    <span className={`inline-block px-2 py-1 text-xs font-medium rounded ${
-                      d.resolution >= 75 ? "bg-green-100 text-green-700" :
-                      d.resolution >= 70 ? "bg-yellow-100 text-yellow-700" :
-                      "bg-orange-100 text-orange-700"
-                    }`}>
-                      {d.resolution >= 75 ? "Excellent" : d.resolution >= 70 ? "Good" : "Needs Attention"}
-                    </span>
-                  </td>
+                  <td className="py-3 px-2 text-center text-xs text-gray-500 italic">{s.highRisk}</td>
+                  <td className="py-3 px-2 text-center text-xs text-gray-500 italic">{s.caseworkers}</td>
+                  <td className="py-3 px-2 text-center text-xs text-gray-500 italic">{s.resolution}</td>
+                  <td className="py-3 px-2 text-xs text-gray-600">{s.note}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="mt-4 pt-4 border-t border-gray-100 bg-amber-50 rounded p-3">
+          <p className="text-xs text-amber-800">
+            <strong>Important:</strong> Official crime statistics are shown for national context. Manas Raksha operational metrics will be generated only from authorised, consent-based pilot data and should not be inferred from crime-registration figures.
+          </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Monthly Trends */}
         <div className="bg-white border border-gray-200 rounded-lg p-5">
-          <h3 className="font-heading font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <h3 className="font-heading font-semibold text-gray-800 mb-2 flex items-center gap-2">
             <BarChart3 size={18} className="text-blue-600" />
-            Monthly Case Trends
+            Monthly Manas Raksha Trends
           </h3>
-          <div className="space-y-4">
-            {monthlyData.map((month) => (
-              <div key={month.month}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">{month.month} 2024</span>
-                  <div className="text-xs text-gray-500">
-                    {month.cases} cases • {month.resolved} resolved
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 bg-gray-100 rounded-full h-3">
-                    <div 
-                      className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full" 
-                      style={{ width: `${(month.resolved / month.cases) * 100}%` }}
-                    />
-                  </div>
-                  <span className="text-sm font-semibold text-gray-700 min-w-[40px]">
-                    {Math.round((month.resolved / month.cases) * 100)}%
-                  </span>
-                </div>
-              </div>
-            ))}
+          <p className="text-xs text-gray-600 mb-4">
+            Monthly Manas Raksha trends will be generated from consent-based pilot data.
+          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-2 text-gray-600">Month</th>
+                  <th className="text-center py-2 text-gray-600">Registered</th>
+                  <th className="text-center py-2 text-gray-600">High-Risk</th>
+                  <th className="text-center py-2 text-gray-600">Alerts</th>
+                  <th className="text-center py-2 text-gray-600">Interventions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {monthlyData.map((month) => (
+                  <tr key={month.month} className="border-b border-gray-100 last:border-0">
+                    <td className="py-2.5 text-gray-700 font-medium">{month.month}</td>
+                    <td className="py-2.5 text-center text-gray-400">{month.cases}</td>
+                    <td className="py-2.5 text-center text-gray-400">{month.resolved}</td>
+                    <td className="py-2.5 text-center text-gray-400">{month.alerts}</td>
+                    <td className="py-2.5 text-center text-gray-400">{month.interventions}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <div className="flex items-center gap-2 text-xs text-green-600">
-              <TrendingUp size={14} />
-              <span>15% improvement in resolution rate over last quarter</span>
-            </div>
+          <div className="mt-4 pt-3 border-t border-gray-100 bg-blue-50 rounded p-2">
+            <p className="text-xs text-blue-800">
+              Available after pilot deployment and authorised data collection
+            </p>
           </div>
         </div>
 
-        {/* Key Metrics */}
+        {/* Key Metrics - Pilot Status */}
         <div className="space-y-4">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg p-5">
             <div className="flex items-center gap-3 mb-3">
@@ -177,11 +222,11 @@ export default function StateAdminDashboard({ currentUser }: StateAdminDashboard
               </div>
               <div>
                 <div className="text-xs font-semibold text-blue-800">System Utilization</div>
-                <div className="text-2xl font-bold text-blue-900">87%</div>
+                <div className="text-lg font-bold text-blue-900">To be measured</div>
               </div>
             </div>
             <div className="text-xs text-blue-700">
-              Average across all districts and caseworkers
+              Available after pilot deployment
             </div>
           </div>
 
@@ -192,11 +237,11 @@ export default function StateAdminDashboard({ currentUser }: StateAdminDashboard
               </div>
               <div>
                 <div className="text-xs font-semibold text-green-800">Top Performing District</div>
-                <div className="text-2xl font-bold text-green-900">Pune</div>
+                <div className="text-sm font-bold text-green-900">To be identified</div>
               </div>
             </div>
             <div className="text-xs text-green-700">
-              78% resolution rate with 54 active cases
+              After comparable pilot data is available
             </div>
           </div>
 
@@ -207,24 +252,24 @@ export default function StateAdminDashboard({ currentUser }: StateAdminDashboard
               </div>
               <div>
                 <div className="text-xs font-semibold text-purple-800">Active Users</div>
-                <div className="text-2xl font-bold text-purple-900">{totalCaseworkers + 12}</div>
+                <div className="text-lg font-bold text-purple-900">Not available</div>
               </div>
             </div>
             <div className="text-xs text-purple-700">
-              Caseworkers and district supervisors combined
+              Available after authorised onboarding
             </div>
           </div>
         </div>
       </div>
 
-      {/* System-wide Alerts */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+      {/* System-wide Notice */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <div className="flex items-start gap-3">
-          <AlertTriangle size={20} className="text-yellow-600 shrink-0 mt-0.5" />
+          <Shield size={20} className="text-blue-600 shrink-0 mt-0.5" />
           <div>
-            <h4 className="font-semibold text-yellow-900 text-sm">Attention Required</h4>
-            <p className="text-xs text-yellow-800 mt-1">
-              Aurangabad district has the lowest resolution rate (69%). Consider allocating additional resources or training.
+            <h4 className="font-semibold text-blue-900 text-sm">Manas Raksha Pilot Platform</h4>
+            <p className="text-xs text-blue-800 mt-1">
+              This dashboard displays genuine national crime statistics (NCRB 2023) for context. All Manas Raksha operational metrics—including high-risk classifications, caseworker activity, resolution rates, and user data—will be generated only from authorised, consent-based pilot deployment and should not be inferred from crime-registration figures.
             </p>
           </div>
         </div>

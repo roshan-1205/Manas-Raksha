@@ -72,6 +72,13 @@ export default function DashboardPage() {
 
   return (
     <div className="p-5 space-y-6 max-w-7xl mx-auto">
+      {/* Pilot Platform Notice */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3">
+        <p className="text-xs text-blue-900">
+          <strong>Prototype Dashboard:</strong> Metrics shown are placeholders. Actual Manas Raksha operational data will be available after pilot deployment with authorised consent-based monitoring.
+        </p>
+      </div>
+
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatusCard label="Total Active Cases" value={dashboardStats.totalActiveCases} Icon={FolderOpen} color="blue" note="Across all stages" />
         <StatusCard label="High-Risk Victims" value={dashboardStats.highRiskVictims} Icon={AlertTriangle} color="red" note="Require priority attention" />
